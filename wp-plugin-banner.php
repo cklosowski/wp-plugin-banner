@@ -30,6 +30,7 @@ class WP_Plugin_Banner {
 
 	private function init() {
 		add_shortcode( 'plugin_banner', array( $this, 'display_banner' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_styles' ) );
 	}
 
 	public function display_banner( $atts ) {
@@ -44,27 +45,52 @@ class WP_Plugin_Banner {
 		}
 
 		$image_url = 'https://plugins.svn.wordpress.org/' . $atts['slug'] . '/assets/banner-772x250.png';
-		$link_url  = $atts['link'] ? 'https://wordpress.org/plugins/' . $slug : '';
+		$link_url  = $atts['link'] ? 'https://wordpress.org/plugins/' . $atts['slug'] : '';
 
-		$image_test = wp_remote_head( $image_url );
-		$image_exists = ! is_wp_error( $image_test ) && 200 == $image_test['response']['code'] ? true : false;
+		$image_exists = get_transient( 'wppb_has_img_' . $atts['slug'] );
+		if ( false === $image_exists ) {
+			$image_test   = wp_remote_head( $image_url );
+			$image_exists = ! is_wp_error( $image_test ) && 200 == $image_test['response']['code'] ? true : '';
+			set_transient( 'wppb_has_img_' . $atts['slug'], $image_exists, WEEK_IN_SECONDS );
+		}
 
-		if ( ! $image_exists ) {
+
+		if ( empty( $image_exists ) ) {
 			return;
 		};
 
-		ob_start();
+		$plugin_data = get_transient( 'wppb_data_' . $atts['slug'] );
+		if ( false === $plugin_data ) {
+			$request     = wp_remote_get( 'https://api.wordpress.org/plugins/info/1.0/' . $atts['slug'] . '.json' );
+			$plugin_data = ! is_wp_error( $request ) && 200 === $request['response']['code'] ? json_decode( wp_remote_retrieve_body( $request ), true ) : array();
+			set_transient( 'wppb_data_' . $atts['slug'], $plugin_data, WEEK_IN_SECONDS );
+		}
+		?>
+		<h3 itemprop="name"><?php echo $plugin_data['name']; ?></h3>
+		<style type="text/css">
+		.plugin-title.<?php echo $atts['slug']; ?> { background-image: url(<?php echo $image_url; ?>); }
+		</style>
+		<?php
 		if ( ! empty( $link_url ) ) {
 			?><a class="wp-plugin-banner-link <?php echo $atts['slug']; ?>" href="<?php echo $link_url; ?>"><?php
 		}
-
-		?><img class="wp-plugin-banner <?php echo $atts['slug']; ?>" src="<?php echo $image_url; ?>" /><?php
-
+		?>
+		<div class="plugin-title <?php echo $atts['slug']; ?>">
+		<div class="vignette"></div>
+		</div>
+		<?php
 		if ( ! empty( $link_url ) ) {
 			?></a><?php
 		}
+		?>
+		<?php
+	}
 
-		ob_end_flush();
+	public function load_styles() {
+		$plugin_url = trailingslashit( plugin_dir_url( __FILE__ ) );
+		$assets_url = $plugin_url . 'assets/';
+		wp_register_style( 'wp-plugin-banner', $assets_url . 'style.css', array(), false, 'all' );
+		wp_enqueue_style( 'wp-plugin-banner' );
 	}
 }
 }
