@@ -48,7 +48,7 @@ class WP_Plugin_Banner {
 		if ( ! in_array( $atts['title_wrapper'], $allowed_wrappers ) ) {
 			$atts['title_wrapper'] = 'h2';
 		}
-		
+
 		if ( empty( $atts['slug'] ) ) {
 			return;
 		}
@@ -63,36 +63,41 @@ class WP_Plugin_Banner {
 			set_transient( 'wppb_has_img_' . $atts['slug'], $image_exists, WEEK_IN_SECONDS );
 		}
 
-
-		if ( empty( $image_exists ) ) {
-			return;
-		};
-
 		$plugin_data = get_transient( 'wppb_data_' . $atts['slug'] );
 		if ( false === $plugin_data ) {
 			$request     = wp_remote_get( 'https://api.wordpress.org/plugins/info/1.0/' . $atts['slug'] . '.json' );
 			$plugin_data = ! is_wp_error( $request ) && 200 === $request['response']['code'] ? json_decode( wp_remote_retrieve_body( $request ), true ) : array();
 			set_transient( 'wppb_data_' . $atts['slug'], $plugin_data, WEEK_IN_SECONDS );
 		}
+		ob_start();
 		?>
-		<style type="text/css">
-		.plugin-title.<?php echo $atts['slug']; ?> { background-image: url(<?php echo $image_url; ?>); }
-		</style>
 		<<?php echo $atts['title_wrapper']; ?> itemprop="name"><?php echo $plugin_data['name']; ?></<?php echo $atts['title_wrapper']; ?>>
+
 		<?php
+
+		if ( empty( $image_exists ) ) {
+			$output = ob_get_contents();
+			ob_end_clean();
+
+			return $output;
+		};
+
 		if ( ! empty( $link_url ) ) {
 			?><a class="wp-plugin-banner-link <?php echo $atts['slug']; ?>" target="_blank" rel="noopener" href="<?php echo $link_url; ?>"><?php
 		}
 		?>
-		<div class="plugin-title <?php echo $atts['slug']; ?>">
-		<div class="vignette"></div>
+		<div class="plugin-title <?php echo $atts['slug']; ?>" style="background-image: url(<?php echo $image_url; ?>">
+			<div class="vignette"></div>
 		</div>
 		<?php
 		if ( ! empty( $link_url ) ) {
 			?></a><?php
 		}
-		?>
-		<?php
+
+		$output = ob_get_contents();
+		ob_end_clean();
+
+		return $output;
 	}
 
 	public function load_styles() {
