@@ -26,6 +26,10 @@ List of supported attributes:
 `title_wrapper - What HTML element to wrap the title of the plugin with. Supported: h2 (default), h3, h4, h5, em, strong, span, p`
 
 == Changelog ==
+
+= 1.0.1 =
+* Fix: Output buffer issue causing banners to all stack at the top of the content
+
 = 1.0 =
 * New: Initial release
 
