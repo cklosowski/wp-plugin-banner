@@ -4,7 +4,7 @@
  Plugin URI: https://chrisk.io
  Description: Adds a shortcode to display a banner from a plugin in the WordPress repository
  Author: cklosows
- Version: 1.0.1
+ Version: 1.0.2
  Author URI: https://chrisk.io
  Text Domain: wp-plugin-banner
  Domain Path: languages
@@ -86,7 +86,7 @@ class WP_Plugin_Banner {
 			?><a class="wp-plugin-banner-link <?php echo $atts['slug']; ?>" target="_blank" rel="noopener" href="<?php echo $link_url; ?>"><?php
 		}
 		?>
-		<div class="plugin-title <?php echo $atts['slug']; ?>" style="background-image: url(<?php echo $image_url; ?>">
+		<div class="plugin-title <?php echo $atts['slug']; ?>" style="background-image: url(<?php echo $image_url; ?>)">
 			<div class="vignette"></div>
 		</div>
 		<?php

@@ -3,7 +3,7 @@ Contributors: cklosows
 Tags: plugin, banner, wordpress.org
 Requires at least: 4.0
 Tested up to: 4.7
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 Donate link: https://chrisk.io/i/donate
 License: GPLv2 or later
 
@@ -26,6 +26,8 @@ List of supported attributes:
 `title_wrapper - What HTML element to wrap the title of the plugin with. Supported: h2 (default), h3, h4, h5, em, strong, span, p`
 
 == Changelog ==
+= 1.0.2 =
+* Fix: Fixing CSS for browers that don't fix markup
 
 = 1.0.1 =
 * Fix: Output buffer issue causing banners to all stack at the top of the content
