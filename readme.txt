@@ -3,7 +3,7 @@ Contributors: cklosows
 Tags: plugin, banner, wordpress.org
 Requires at least: 4.0
 Tested up to: 4.7
-Stable tag: 1.0
+Stable tag: 1.0.1
 Donate link: https://chrisk.io/i/donate
 License: GPLv2 or later
 

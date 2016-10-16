@@ -4,7 +4,7 @@
  Plugin URI: https://chrisk.io
  Description: Adds a shortcode to display a banner from a plugin in the WordPress repository
  Author: cklosows
- Version: 1.0
+ Version: 1.0.1
  Author URI: https://chrisk.io
  Text Domain: wp-plugin-banner
  Domain Path: languages
