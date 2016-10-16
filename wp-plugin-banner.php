@@ -35,10 +35,19 @@ class WP_Plugin_Banner {
 
 	public function display_banner( $atts ) {
 		$atts = shortcode_atts(
-			array( 'slug' => '', 'link' => false ),
+			array(
+				'slug'          => '',
+				'link'          => false,
+				'title_wrapper' => 'h2',
+			),
 			$atts,
 			'wp_plugin_banners_display_atts'
 		);
+
+		$allowed_wrappers = array( 'h2', 'h3', 'h4', 'h5', 'p', 'strong', 'span', 'em' );
+		if ( ! in_array( $atts['title_wrapper'], $allowed_wrappers ) ) {
+			$atts['title_wrapper'] = 'h2';
+		}
 		
 		if ( empty( $atts['slug'] ) ) {
 			return;
@@ -66,13 +75,13 @@ class WP_Plugin_Banner {
 			set_transient( 'wppb_data_' . $atts['slug'], $plugin_data, WEEK_IN_SECONDS );
 		}
 		?>
-		<h3 itemprop="name"><?php echo $plugin_data['name']; ?></h3>
 		<style type="text/css">
 		.plugin-title.<?php echo $atts['slug']; ?> { background-image: url(<?php echo $image_url; ?>); }
 		</style>
+		<<?php echo $atts['title_wrapper']; ?> itemprop="name"><?php echo $plugin_data['name']; ?></<?php echo $atts['title_wrapper']; ?>>
 		<?php
 		if ( ! empty( $link_url ) ) {
-			?><a class="wp-plugin-banner-link <?php echo $atts['slug']; ?>" href="<?php echo $link_url; ?>"><?php
+			?><a class="wp-plugin-banner-link <?php echo $atts['slug']; ?>" target="_blank" rel="noopener" href="<?php echo $link_url; ?>"><?php
 		}
 		?>
 		<div class="plugin-title <?php echo $atts['slug']; ?>">
